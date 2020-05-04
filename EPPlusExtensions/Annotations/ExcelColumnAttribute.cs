@@ -2,6 +2,7 @@
 
 namespace EPPlusExtensions.Annotations
 {
+    [AttributeUsage(AttributeTargets.Property)]
     public class ExcelColumnAttribute : Attribute
     {
         public ExcelColumnAttribute(string column)

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using EPPlusExtensions.Annotations;
 using EPPlusExtensions.Extensions;
 using OfficeOpenXml;
 
@@ -15,7 +17,24 @@ namespace EPPlusExtensions
         {
             foreach (var propertyInfo in typeof(T).GetProperties())
             {
-                PropertyMappings.Add(new ExcelPropertyMapping(propertyInfo, null, propertyInfo.Name));
+                var excelPropertyMapping = new ExcelPropertyMapping(propertyInfo, null, propertyInfo.Name);
+
+                if (propertyInfo.GetCustomAttribute<ExcelColumnAttribute>() is {} excelColumnAttribute)
+                {
+                    excelPropertyMapping.Header = excelColumnAttribute.Column;
+                }
+
+                if (propertyInfo.GetCustomAttribute<ExcelFormatAttribute>() is {} excelFormatAttribute)
+                {
+                    excelPropertyMapping.Header = excelFormatAttribute.Format;
+                }
+
+                if (propertyInfo.GetCustomAttribute<ExcelOrderAttribute>() is {} excelOrderAttribute)
+                {
+                    excelPropertyMapping.Order = excelOrderAttribute.Order;
+                }
+
+                PropertyMappings.Add(excelPropertyMapping);
             }
 
             return this;
@@ -51,7 +70,7 @@ namespace EPPlusExtensions
             var worksheet = package.Workbook.Worksheets.Add("default");
             var currentRow = 1;
 
-            var sortedHeaders = PropertyMappings.OrderByDescending(i => i.Index).Select(i => i.Header)
+            var sortedHeaders = PropertyMappings.OrderByDescending(i => i.Order).Select(i => i.Header)
                 .Distinct()
                 .Select((excel, index) => new {Index = index, Value = excel})
                 .ToDictionary(i => i.Index + 1, i => i.Value);

@@ -12,12 +12,12 @@ namespace EPPlusExtensions
         };
         
         public ExcelPropertyMapping(PropertyInfo runtimeProperty, Func<object, object> transformValue,
-                                    string header, int index = -1)
+                                    string header, int order = -1)
         {
             RuntimeProperty = runtimeProperty;
             TransformValue = transformValue;
             Header = header;
-            Index = index;
+            Order = order;
             Format = DefaultFormatters.GetValueOrDefault(runtimeProperty.PropertyType);
         }
 
@@ -29,7 +29,7 @@ namespace EPPlusExtensions
 
         public string Format { get; set; }
 
-        public int Index { get; set; }
+        public int Order { get; set; }
 
         internal object GetValue(object item)
         {
