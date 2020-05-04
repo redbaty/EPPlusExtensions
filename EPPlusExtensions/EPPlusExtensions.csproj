@@ -2,7 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <PackageVersion>1.0.1</PackageVersion>
+        <PackageVersion>1.0.2</PackageVersion>
+        <PackageProjectUrl>https://github.com/redbaty/EPPlusExtensions</PackageProjectUrl>
     </PropertyGroup>
 
     <ItemGroup>
