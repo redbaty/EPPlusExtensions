@@ -1,5 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Bogus;
+using EPPlusExtensions.Annotations;
+using EPPlusExtensions.Extensions;
 
 namespace EPPlusExtensions.Tests
 {
@@ -9,6 +12,7 @@ namespace EPPlusExtensions.Tests
 
         public double Price { get; set; }
 
+        [ExcelColumn("Product Name")]
         public string Name { get; set; }
 
         public string Remove { get; set; }
@@ -25,7 +29,8 @@ namespace EPPlusExtensions.Tests
                 .RuleFor(i => i.Remove, f => f.Hacker.Phrase());
 
             var generate = people.Generate(1000);
-            var x = new ExcelMapping<Product>().AutoMap()
+            var x = generate.CreateMapping()
+                .AutoMap()
                 .Property(i => i.Price, e =>
                 {
                     e.TransformValue = o =>
@@ -39,7 +44,7 @@ namespace EPPlusExtensions.Tests
                     };
                 })
                 .RemovePropertyMapping(i => i.Remove);
-            File.WriteAllBytes("output.xlsx", x.WriteExcelFile(generate));
+            File.WriteAllBytes("output.xlsx", x.WriteExcelFile());
         }
     }
 }
