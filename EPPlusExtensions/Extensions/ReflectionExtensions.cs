@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace EPPlusExtensions
+namespace EPPlusExtensions.Extensions
 {
     internal static class ReflectionExtensions
     {

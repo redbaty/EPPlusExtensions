@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using OfficeOpenXml;
 
-namespace EPPlusExtensions
+namespace EPPlusExtensions.Extensions
 {
     public static class ExcelExtensions
     {
@@ -25,9 +25,9 @@ namespace EPPlusExtensions
                     .AutoFitColumns();
         }
         
-        public static ExcelMapping<T> CreateMapping<T>(this IEnumerable<T> items)
+        public static ExcelMappingWithItems<T> CreateMapping<T>(this IEnumerable<T> items)
         {
-            return new ExcelMapping<T>();
+            return new ExcelMappingWithItems<T>(items);
         }
     }
 }
