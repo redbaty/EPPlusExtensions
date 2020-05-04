@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPPlusExtensions", "EPPlusExtensions\EPPlusExtensions.csproj", "{15FB0846-CDA4-4DD4-AB44-C5466B05552D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EPPlusExtensions.Tests", "EPPlusExtensions.Tests\EPPlusExtensions.Tests.csproj", "{9F956367-1E9A-4592-A25E-F7F0B6723DC7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{15FB0846-CDA4-4DD4-AB44-C5466B05552D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15FB0846-CDA4-4DD4-AB44-C5466B05552D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15FB0846-CDA4-4DD4-AB44-C5466B05552D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15FB0846-CDA4-4DD4-AB44-C5466B05552D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F956367-1E9A-4592-A25E-F7F0B6723DC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F956367-1E9A-4592-A25E-F7F0B6723DC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F956367-1E9A-4592-A25E-F7F0B6723DC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F956367-1E9A-4592-A25E-F7F0B6723DC7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
