@@ -64,7 +64,7 @@ namespace EPPlusExtensions
             return this;
         }
 
-        public byte[] WriteExcelFile(IEnumerable<T> items, bool autoFit = true)
+        public byte[] WriteExcelFile(IEnumerable<T> items, bool autoFit = true, Action<ExcelRange> headerRowConfig = null)
         {
             var package = new ExcelPackage();
             var worksheet = package.Workbook.Worksheets.Add("default");
@@ -79,7 +79,9 @@ namespace EPPlusExtensions
 
             foreach (var (key, value) in sortedHeaders)
             {
-                worksheet.Cells[currentRow, key].Value = value;
+                var worksheetCell = worksheet.Cells[currentRow, key];
+                worksheetCell.Value = value;
+                headerRowConfig?.Invoke(worksheetCell);
             }
 
             currentRow++;

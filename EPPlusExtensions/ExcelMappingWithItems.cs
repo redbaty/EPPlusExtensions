@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using OfficeOpenXml;
 
 namespace EPPlusExtensions
 {
@@ -13,9 +14,9 @@ namespace EPPlusExtensions
 
         private IEnumerable<T> Items { get; }
 
-        public byte[] WriteExcelFile(bool autoFit = true)
+        public byte[] WriteExcelFile(bool autoFit = true, Action<ExcelRange> headerRowConfig = null)
         {
-            return WriteExcelFile(Items, autoFit);
+            return WriteExcelFile(Items, autoFit, headerRowConfig);
         }
 
         public new ExcelMappingWithItems<T> AutoMap()
