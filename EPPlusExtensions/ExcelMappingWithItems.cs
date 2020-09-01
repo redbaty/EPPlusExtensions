@@ -19,13 +19,19 @@ namespace EPPlusExtensions
             return WriteExcelFile(Items, autoFit, headerRowConfig);
         }
 
+        public ExcelWorksheet WriteToWorksheet(ExcelWorksheet worksheet, bool autoFit = true,
+            Action<ExcelRange> headerRowConfig = null)
+        {
+            return WriteToWorksheet(Items, worksheet, autoFit, headerRowConfig);
+        }
+
         public new ExcelMappingWithItems<T> AutoMap()
         {
             return (ExcelMappingWithItems<T>) base.AutoMap();
         }
 
         public new ExcelMappingWithItems<T> Property<TObj>(Expression<Func<T, TObj>> propertyLambda,
-                                                           Action<ExcelPropertyMapping> action)
+            Action<ExcelPropertyMapping> action)
         {
             return (ExcelMappingWithItems<T>) base.Property(propertyLambda, action);
         }

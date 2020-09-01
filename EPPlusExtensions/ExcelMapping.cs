@@ -17,7 +17,7 @@ namespace EPPlusExtensions
         {
             foreach (var propertyInfo in typeof(T).GetProperties())
             {
-                var excelPropertyMapping = new ExcelPropertyMapping(propertyInfo, null, propertyInfo.Name);
+                var excelPropertyMapping = new ExcelPropertyMapping(propertyInfo, null, propertyInfo.Name.ToSentence());
 
                 if (propertyInfo.GetCustomAttribute<ExcelColumnAttribute>() is {} excelColumnAttribute)
                 {
@@ -67,8 +67,14 @@ namespace EPPlusExtensions
         public byte[] WriteExcelFile(IEnumerable<T> items, bool autoFit = true, Action<ExcelRange> headerRowConfig = null)
         {
             var package = new ExcelPackage();
-            var worksheet = package.Workbook.Worksheets.Add("default");
-            var currentRow = 1;
+            WriteToWorksheet(items, package.Workbook.Worksheets.Add("default"), autoFit, headerRowConfig);
+
+            return package.GetAsByteArray();
+        }
+
+        public ExcelWorksheet WriteToWorksheet(IEnumerable<T> items, ExcelWorksheet worksheet, bool autoFit = true, Action<ExcelRange> headerRowConfig = null, int startRow = 1)
+        {
+            var currentRow = startRow;
 
             var sortedHeaders = PropertyMappings.OrderByDescending(i => i.Order).Select(i => i.Header)
                 .Distinct()
@@ -102,9 +108,9 @@ namespace EPPlusExtensions
             }
 
             if (autoFit)
-                package.AutoFit();
+                worksheet.AutoFit();
 
-            return package.GetAsByteArray();
+            return worksheet;
         }
     }
 }
