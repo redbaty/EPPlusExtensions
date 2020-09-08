@@ -18,7 +18,7 @@ namespace EPPlusExtensions
             TransformValue = transformValue;
             Header = header;
             Order = order;
-            Format = DefaultFormatters.GetValueOrDefault(runtimeProperty.PropertyType);
+            Format = DefaultFormatters.GetValueOrDefault(Nullable.GetUnderlyingType(runtimeProperty.PropertyType) ?? runtimeProperty.PropertyType);
         }
 
         public PropertyInfo RuntimeProperty { get; }
