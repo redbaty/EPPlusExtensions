@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -17,7 +18,7 @@ namespace EPPlusExtensions
         {
             foreach (var propertyInfo in typeof(T).GetProperties())
             {
-                var excelPropertyMapping = new ExcelPropertyMapping(propertyInfo, null, propertyInfo.Name.ToSentence());
+                var excelPropertyMapping = new ExcelPropertyMapping(propertyInfo, null, null, propertyInfo.Name.ToSentence());
 
                 if (propertyInfo.GetCustomAttribute<ExcelColumnAttribute>() is {} excelColumnAttribute)
                 {
@@ -44,8 +45,13 @@ namespace EPPlusExtensions
                                               Action<ExcelPropertyMapping> action)
         {
             var propertyInfo = propertyLambda.GetProperty();
-            var excelPropertyMapping = PropertyMappings.SingleOrDefault(i => i.RuntimeProperty == propertyInfo) ??
-                                       new ExcelPropertyMapping(propertyInfo, null, null);
+            var excelPropertyMapping = PropertyMappings.SingleOrDefault(i => i.RuntimeProperty == propertyInfo);
+            if (excelPropertyMapping == null)
+            {
+                excelPropertyMapping = new ExcelPropertyMapping(propertyInfo, null, null, null);
+                PropertyMappings.Add(excelPropertyMapping);
+            }
+
             action.Invoke(excelPropertyMapping);
             return this;
         }
@@ -64,11 +70,60 @@ namespace EPPlusExtensions
             return this;
         }
 
+        public IEnumerable<T> ReadFromExcelFile(Stream fileStream, int sheet = 0, int headerRow = 1)
+        {
+            using var package = new ExcelPackage();
+            package.Load(fileStream);
+
+            using var worksheet = package.Workbook.Worksheets[sheet];
+            var maxRows = worksheet.Dimension.Rows;
+            var maxColumns = worksheet.Dimension.Columns;
+            var columnToPropertyMapping = new Dictionary<int, ExcelPropertyMapping>();
+            
+            for (var currentRow = headerRow; currentRow <= maxRows; currentRow++)
+            {
+                var values = Enumerable.Range(1, maxColumns)
+                    .Select(i => worksheet.Cells[currentRow, i].Value)
+                    .ToArray();
+                
+                if (currentRow == headerRow)
+                {
+                    for (var index = 0; index < values.Length; index++)
+                    {
+                        var headerValue = values[index];
+                        var columnHeader = headerValue?.ToString();
+                        var excelPropertyMapping = PropertyMappings.SingleOrDefault(i => i.Header == columnHeader);
+
+                        if (excelPropertyMapping != null)
+                        {
+                            columnToPropertyMapping.Add(index, excelPropertyMapping);
+                        }
+                    }
+                }
+                else
+                {
+                    var newObject = default(T);
+                    
+                    for (var index = 0; index < values.Length; index++)
+                    {
+                        if (columnToPropertyMapping.TryGetValue(index, out var mapping))
+                        {
+                            newObject ??= Activator.CreateInstance<T>();
+                            var value = values[index];
+                            mapping.RuntimeProperty.SetValue(newObject, mapping.Parse(value, mapping.RuntimeProperty));
+                        }
+                    }
+
+                    yield return newObject;
+                }
+            }
+        }
+
         public byte[] WriteExcelFile(IEnumerable<T> items, bool autoFit = true, Action<ExcelRange> headerRowConfig = null)
         {
-            var package = new ExcelPackage();
-            WriteToWorksheet(items, package.Workbook.Worksheets.Add("default"), autoFit, headerRowConfig);
-
+            using var package = new ExcelPackage();
+            using var worksheet = package.Workbook.Worksheets.Add("default");
+            WriteToWorksheet(items, worksheet, autoFit, headerRowConfig);
             return package.GetAsByteArray();
         }
 

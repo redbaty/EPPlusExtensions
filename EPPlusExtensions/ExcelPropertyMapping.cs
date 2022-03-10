@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -8,17 +8,20 @@ namespace EPPlusExtensions
     {
         public static Dictionary<Type, string> DefaultFormatters { get; } = new Dictionary<Type, string>
         {
-            {typeof(DateTime), "dd/mm/yyyy"}
+            { typeof(DateTime), "dd/mm/yyyy" }
         };
-        
+
         public ExcelPropertyMapping(PropertyInfo runtimeProperty, Func<object, object> transformValue,
-                                    string header, int order = -1)
+            Func<object, PropertyInfo, object> parse,
+            string header, int order = -1)
         {
             RuntimeProperty = runtimeProperty;
             TransformValue = transformValue;
             Header = header;
             Order = order;
-            Format = DefaultFormatters.GetValueOrDefault(Nullable.GetUnderlyingType(runtimeProperty.PropertyType) ?? runtimeProperty.PropertyType);
+            Parse = parse ?? Parse;
+            Format = DefaultFormatters.GetValueOrDefault(Nullable.GetUnderlyingType(runtimeProperty.PropertyType) ??
+                                                         runtimeProperty.PropertyType);
         }
 
         public PropertyInfo RuntimeProperty { get; }
