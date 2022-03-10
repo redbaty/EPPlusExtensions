@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -28,6 +28,18 @@ namespace EPPlusExtensions
         public string Header { get; set; }
 
         public string Format { get; set; }
+
+        public Func<object, PropertyInfo, object> Parse { get; set; } =
+            (o, property) => {
+                try
+                {
+                    return Convert.ChangeType(o, property.PropertyType);
+                }
+                catch
+                {
+                    return default;
+                }
+            };
 
         public int Order { get; set; }
 
